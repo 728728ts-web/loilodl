@@ -11,7 +11,7 @@
             width: 100%;
             height: 100%;
             overflow: hidden;
-            background-color: #111; /* 画像が出ない時の予備色 */
+            background-color: #111;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -19,7 +19,7 @@
             font-family: 'Segoe UI', sans-serif;
         }
 
-        /* 背景：画像指定の場所 */
+        /* 背景設定 */
         .bg-container {
             position: fixed;
             top: 0;
@@ -36,7 +36,6 @@
             position: absolute;
             top: -5%;
             left: -5%;
-            /* ↓ ここが画像指定！ファイル名がズレていると出ません */
             background-image: url('./背景.png'); 
             background-repeat: no-repeat;
             background-position: center;
@@ -44,23 +43,43 @@
             filter: blur(20px) brightness(0.5);
         }
 
+        /* --- アニメーションの設定 --- */
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px); /* 50px下から開始 */
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0); /* 定位置へ */
+            }
+        }
+
         .content {
             text-align: center;
             z-index: 10;
         }
 
+        /* 各要素にアニメーションを適用 */
         h1 {
             font-size: clamp(3rem, 15vw, 6rem);
             margin: 0;
             background: linear-gradient(to bottom, #ffd1ff, #fbc2eb);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            
+            /* アニメーション：名前 時間 動き 遅延 完了後の状態保持 */
+            animation: slideUp 0.8s ease-out forwards;
         }
 
         .subtitle {
             font-size: 1.2rem;
             color: rgba(255,255,255,0.7);
             margin: 10px 0 40px 0;
+            
+            /* タイトルの少し後に動かす */
+            animation: slideUp 0.8s ease-out 0.2s forwards;
+            opacity: 0; /* 最初は隠しておく */
         }
 
         .btn {
@@ -73,14 +92,23 @@
             background: linear-gradient(135deg, #cf9fff 0%, #ff99cc 100%);
             box-shadow: 0 10px 30px rgba(207, 159, 255, 0.4);
             transition: 0.3s;
+
+            /* さらに少し遅れて動かす */
+            animation: slideUp 0.8s ease-out 0.4s forwards;
+            opacity: 0;
         }
 
-        /* 残像（ドット）のデザイン */
+        .btn:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(255, 153, 204, 0.6);
+        }
+
+        /* 残像（ドット） */
         .trail {
             position: fixed;
             width: 8px;
             height: 8px;
-            background: #ff99cc; /* ピンクの残像 */
+            background: #ff99cc;
             border-radius: 50%;
             pointer-events: none;
             z-index: 5;
@@ -103,7 +131,6 @@
     </div>
 
     <script>
-        // 残像の処理
         document.addEventListener('mousemove', (e) => {
             const trail = document.createElement('div');
             trail.className = 'trail';
@@ -111,7 +138,6 @@
             trail.style.top = e.pageY + 'px';
             document.body.appendChild(trail);
 
-            // 0.5秒かけて消えていく
             setTimeout(() => {
                 trail.style.opacity = '0';
                 trail.style.transform = 'scale(0)';

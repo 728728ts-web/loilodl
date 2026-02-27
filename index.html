@@ -3,16 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Filterize</title>
+    <title>Filterize - Download</title>
     <style>
-        /* 黒い枠を完全に消す設定 */
         body, html {
             margin: 0;
             padding: 0;
             width: 100%;
             height: 100%;
             overflow: hidden;
-            background-color: #0d1117; /* 万が一の時の背景色 */
+            background-color: #000;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -20,7 +19,7 @@
             font-family: 'Segoe UI', sans-serif;
         }
 
-        /* 背景：画面いっぱいに広げてぼかす */
+        /* 背景：画面全体 */
         .bg-container {
             position: fixed;
             top: 0;
@@ -28,65 +27,63 @@
             width: 100vw;
             height: 100vh;
             z-index: -1;
-            overflow: hidden;
+            /* ここでSVGフィルタ（ゆがみ）を適用 */
+            filter: url(#distort) blur(20px) brightness(0.5);
         }
 
         .bg-image {
-            width: 110%; /* ぼかしの端を隠すために少し大きく */
-            height: 110%;
+            width: 120%;
+            height: 120%;
             position: absolute;
-            top: -5%;
-            left: -5%;
-            background: url('背景.png') no-repeat center center;
-            background-size: cover;
-            filter: blur(20px) brightness(0.5);
-            transition: transform 0.1s ease-out; /* ゆがみ演出用 */
+            top: -10%;
+            left: -10%;
+            background: url('背景.png') no-repeat center center/cover;
         }
 
-        /* 中央の文字とボタン */
+        /* 中央のコンテンツ */
         .content {
             text-align: center;
             z-index: 10;
         }
 
         h1 {
-            font-size: 4rem;
+            font-size: clamp(3rem, 15vw, 6rem);
             margin: 0;
-            letter-spacing: 2px;
-            background: linear-gradient(to bottom, #fff, #ff99cc);
+            font-weight: 800;
+            /* ピンクのグラデーション文字 */
+            background: linear-gradient(to bottom, #ffd1ff, #fbc2eb);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
         .subtitle {
             font-size: 1.2rem;
-            color: #aaa;
-            margin-bottom: 40px;
+            color: rgba(255, 255, 255, 0.8);
+            margin: 10px 0 40px 0;
+            font-weight: 300;
         }
 
-        /* グラデーションボタン */
-        .btn-group {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-        }
-
+        /* ダウンロードボタン（画像通りのスタイル） */
         .btn {
-            padding: 15px 35px;
-            border-radius: 10px;
+            display: inline-block;
+            padding: 18px 60px;
+            border-radius: 15px;
             text-decoration: none;
             color: white;
             font-weight: bold;
-            font-size: 1rem;
-            background: linear-gradient(135deg, #a78bfa 0%, #f472b6 100%);
-            box-shadow: 0 4px 15px rgba(167, 139, 250, 0.4);
+            font-size: 1.2rem;
+            /* ピンク〜紫のグラデーション */
+            background: linear-gradient(135deg, #cf9fff 0%, #ff99cc 100%);
+            box-shadow: 0 10px 30px rgba(207, 159, 255, 0.4);
             transition: 0.3s;
         }
 
         .btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 6px 25px rgba(244, 114, 182, 0.6);
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(255, 153, 204, 0.6);
+            filter: brightness(1.1);
         }
+
     </style>
 </head>
 <body>
@@ -95,144 +92,38 @@
         <div class="bg-image" id="bg"></div>
     </div>
 
-    <div class="content">
-        <h1><!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nature Client</title>
-    <style>
-        /* 黒い枠を完全に消す設定 */
-        body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            background-color: #0d1117; /* 万が一の時の背景色 */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            font-family: 'Segoe UI', sans-serif;
-        }
-
-        /* 背景：画面いっぱいに広げてぼかす */
-        .bg-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: -1;
-            overflow: hidden;
-        }
-
-        .bg-image {
-            width: 110%; /* ぼかしの端を隠すために少し大きく */
-            height: 110%;
-            position: absolute;
-            top: -5%;
-            left: -5%;
-            background: url('背景.png') no-repeat center center;
-            background-size: cover;
-            filter: blur(20px) brightness(0.5);
-            transition: transform 0.1s ease-out; /* ゆがみ演出用 */
-        }
-
-        /* 中央の文字とボタン */
-        .content {
-            text-align: center;
-            z-index: 10;
-        }
-
-        h1 {
-            font-size: 4rem;
-            margin: 0;
-            letter-spacing: 2px;
-            background: linear-gradient(to bottom, #fff, #ff99cc);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .subtitle {
-            font-size: 1.2rem;
-            color: #aaa;
-            margin-bottom: 40px;
-        }
-
-        /* グラデーションボタン */
-        .btn-group {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-        }
-
-        .btn {
-            padding: 15px 35px;
-            border-radius: 10px;
-            text-decoration: none;
-            color: white;
-            font-weight: bold;
-            font-size: 1rem;
-            background: linear-gradient(135deg, #a78bfa 0%, #f472b6 100%);
-            box-shadow: 0 4px 15px rgba(167, 139, 250, 0.4);
-            transition: 0.3s;
-        }
-
-        .btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 6px 25px rgba(244, 114, 182, 0.6);
-        }
-    </style>
-</head>
-<body>
-
-    <div class="bg-container">
-        <div class="bg-image" id="bg"></div>
-    </div>
+    <svg style="display: none;">
+        <filter id="distort">
+            <feTurbulence type="fractalNoise" baseFrequency="0.01" numOctaves="3" result="noise" />
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="50" xChannelSelector="R" yChannelSelector="G" id="map" />
+        </filter>
+    </svg>
 
     <div class="content">
         <h1>Filterize</h1>
-        <p class="subtitle">The best anti loilo</p>
+        <p class="subtitle">The best anti loilofilter</p>
         
-        <div class="btn-group">
-            <a href="https://www.dropbox.com/scl/fi/jhjaiww74lcgo741zqnng/.exe?rlkey=tv4zztnvfql4sd4c4nfsncioz&st=vwymdduv&dl=1" class="btn">Download</a>
-            <a href="#" class="btn" style="filter: hue-rotate(45deg);">Discord</a>
-        </div>
+        <a href="https://www.dropbox.com/scl/fi/jhjaiww74lcgo741zqnng/.exe?rlkey=tv4zztnvfql4sd4c4nfsncioz&st=vwymdduv&dl=1" class="btn">
+            Download Now
+        </a>
     </div>
 
     <script>
-        // カーソルに合わせて背景を「ゆがませる（少し動かす）」演出
+        const map = document.getElementById('map');
         const bg = document.getElementById('bg');
-        document.addEventListener('mousemove', (e) => {
-            const x = (window.innerWidth / 2 - e.pageX) / 25;
-            const y = (window.innerHeight / 2 - e.pageY) / 25;
-            bg.style.transform = `translate(${x}px, ${y}px) scale(1.1)`;
-        });
-    </script>
 
-</body>
-</html></h1>
-        <p class="subtitle">The best minecraft bedrock free utility mod</p>
-        
-        <div class="btn-group">
-            <a href="https://www.dropbox.com/scl/fi/jhjaiww74lcgo741zqnng/.exe?rlkey=tv4zztnvfql4sd4c4nfsncioz&st=vwymdduv&dl=1" class="btn">Download</a>
-            <a href="#" class="btn" style="filter: hue-rotate(45deg);">Discord</a>
-        </div>
-    </div>
-
-    <script>
-        // カーソルに合わせて背景を「ゆがませる（少し動かす）」演出
-        const bg = document.getElementById('bg');
+        // カーソルの位置に合わせて「ゆがみ」と「視差」を調整
         document.addEventListener('mousemove', (e) => {
-            const x = (window.innerWidth / 2 - e.pageX) / 25;
-            const y = (window.innerHeight / 2 - e.pageY) / 25;
-            bg.style.transform = `translate(${x}px, ${y}px) scale(1.1)`;
+            // 背景を少し動かす（視差）
+            const moveX = (window.innerWidth / 2 - e.pageX) / 30;
+            const moveY = (window.innerHeight / 2 - e.pageY) / 30;
+            bg.style.transform = `translate(${moveX}px, ${moveY}px)`;
+
+            // ゆがみの強さをカーソルの動きに連動（演出）
+            const dist = Math.abs(moveX) + Math.abs(moveY);
+            map.setAttribute('scale', 30 + dist);
         });
     </script>
 
 </body>
 </html>
-

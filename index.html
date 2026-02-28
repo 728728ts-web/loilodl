@@ -129,7 +129,7 @@
             transform: rotate(45deg);
         }
 
-        /* Bottom label */
+        /* Bottom labels */
         .bottom {
             position: fixed;
             bottom: 36px; right: 8vw;
@@ -141,6 +141,16 @@
             opacity: 0;
         }
 
+        .copyright {
+            position: fixed;
+            bottom: 36px; left: 8vw;
+            font-size: 0.7rem;
+            letter-spacing: 0.1em;
+            color: rgba(255,255,255,0.2);
+            animation: fadeIn 1.2s ease 0.6s forwards;
+            opacity: 0;
+        }
+
         /* Keyframes */
         @keyframes slideUp {
             to { opacity: 1; transform: translateY(0); }
@@ -148,24 +158,11 @@
         @keyframes fadeIn {
             to { opacity: 1; }
         }
-
-        /* Minimal cursor dot */
-        .cursor {
-            position: fixed;
-            width: 6px; height: 6px;
-            background: var(--accent);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 999;
-            transform: translate(-50%, -50%);
-            transition: transform 0.1s;
-        }
     </style>
 </head>
 <body>
 
     <div class="bg"><div class="bg-img"></div></div>
-    <div class="cursor" id="cursor"></div>
 
     <main class="page">
         <div class="rule"></div>
@@ -177,14 +174,8 @@
         </a>
     </main>
 
+    <span class="copyright">©2026 T</span>
     <span class="bottom">Filterize</span>
 
-    <script>
-        const cursor = document.getElementById('cursor');
-        document.addEventListener('mousemove', e => {
-            cursor.style.left = e.clientX + 'px';
-            cursor.style.top = e.clientY + 'px';
-        });
-    </script>
 </body>
 </html>

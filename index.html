@@ -25,21 +25,15 @@
         }
 
         /* Background */
-        .bg {
-            position: fixed; inset: 0; z-index: 0;
-        }
+        .bg { position: fixed; inset: 0; z-index: 0; }
         .bg-img {
             width: 100%; height: 100%;
-            /* 背景画像を「背景.png」に変更 */
             background-image: url('背景.png'); 
             background-size: cover;
             background-position: center;
-            /* ぼかしを150pxに強化、明るさと彩度も調整 */
             filter: blur(150px) brightness(0.2) saturate(0.6);
-            /* ぼかしによる端の余白を消すために拡大率をアップ */
             transform: scale(1.2);
         }
-        /* 粒状のノイズオーバーレイ（質感を出すため） */
         .bg::after {
             content: '';
             position: absolute; inset: 0;
@@ -57,7 +51,6 @@
             padding: 0 8vw;
         }
 
-        /* Thin top rule */
         .rule {
             width: 48px; height: 1px;
             background: var(--accent);
@@ -66,19 +59,16 @@
             opacity: 0;
         }
 
-        /* Title */
         h1 {
             font-family: 'Bebas Neue', sans-serif;
             font-size: clamp(5rem, 16vw, 12rem);
             line-height: 0.9;
             letter-spacing: 0.02em;
-            color: var(--fg);
             animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
             opacity: 0;
             transform: translateY(30px);
         }
 
-        /* Subtitle */
         .subtitle {
             margin-top: 16px;
             font-size: 0.8rem;
@@ -91,76 +81,65 @@
             transform: translateY(20px);
         }
 
-        /* Button */
+        /* Buttons & Status Messages */
+        .content-area {
+            margin-top: 52px;
+            animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.4s forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
         .btn {
             display: inline-flex;
             align-items: center;
             gap: 14px;
-            margin-top: 52px;
             padding: 18px 40px;
             background: var(--accent);
             color: #0a0a0a;
             text-decoration: none;
-            font-family: 'DM Sans', sans-serif;
             font-size: 0.85rem;
             font-weight: 400;
             letter-spacing: 0.2em;
             text-transform: uppercase;
             border-radius: 2px;
-            animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.4s forwards;
-            opacity: 0;
-            transform: translateY(20px);
             transition: background 0.2s, gap 0.2s;
         }
-        .btn:hover {
-            background: #d4ff1a;
-            gap: 22px;
-        }
+        .btn:hover { background: #d4ff1a; gap: 22px; }
         .btn-arrow {
             width: 16px; height: 1px;
             background: #0a0a0a;
             position: relative;
-            transition: width 0.2s;
         }
         .btn-arrow::after {
-            content: '';
-            position: absolute;
-            right: 0; top: -3px;
+            content: ''; position: absolute; right: 0; top: -3px;
             width: 6px; height: 6px;
-            border-right: 1px solid #0a0a0a;
-            border-top: 1px solid #0a0a0a;
+            border-right: 1px solid #0a0a0a; border-top: 1px solid #0a0a0a;
             transform: rotate(45deg);
         }
 
-        /* Bottom labels */
-        .bottom {
-            position: fixed;
-            bottom: 36px; right: 8vw;
-            font-size: 0.7rem;
-            letter-spacing: 0.15em;
+        .closed-msg {
+            font-size: 0.85rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--muted);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 18px 30px;
+        }
+
+        /* Utils */
+        .bottom, .copyright {
+            position: fixed; bottom: 36px;
+            font-size: 0.7rem; letter-spacing: 0.15em;
             color: rgba(255,255,255,0.2);
             text-transform: uppercase;
             animation: fadeIn 1.2s ease 0.6s forwards;
             opacity: 0;
         }
+        .bottom { right: 8vw; }
+        .copyright { left: 8vw; }
 
-        .copyright {
-            position: fixed;
-            bottom: 36px; left: 8vw;
-            font-size: 0.7rem;
-            letter-spacing: 0.1em;
-            color: rgba(255,255,255,0.2);
-            animation: fadeIn 1.2s ease 0.6s forwards;
-            opacity: 0;
-        }
-
-        /* Keyframes */
-        @keyframes slideUp {
-            to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes fadeIn {
-            to { opacity: 1; }
-        }
+        @keyframes slideUp { to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { to { opacity: 1; } }
     </style>
 </head>
 <body>
@@ -169,17 +148,46 @@
 
     <main class="page">
         <div class="rule"></div>
-        <h1>Filterize</h1>
-        <p class="subtitle">The best anti loilofilter</p>
-        <a href="https://www.dropbox.com/scl/fi/xhhn2tzd3esj2r13ff504/.exe?rlkey=quvaxs0d48hngb0ykfxt93xo1&st=uozez1mk&dl=1" class="btn">
-            Download Now
-            <span class="btn-arrow"></span>
-        </a>
+        <h1 id="main-title">Filterize</h1>
+        <p class="subtitle" id="main-subtitle">The best anti loilofilter</p>
+        
+        <div class="content-area" id="interactive-content">
+            </div>
     </main>
 
     <span class="copyright">©2026 T</span>
     <span class="bottom">Filterize</span>
 
+    <script>
+        /**
+         * モード設定
+         * 'on'  : 通常（ダウンロード可能）
+         * 'off' : 閉鎖中（メンテナンス表示）
+         */
+        const siteStatus = 'on'; 
+
+        const content = document.getElementById('interactive-content');
+        const title = document.getElementById('main-title');
+        const subtitle = document.getElementById('main-subtitle');
+
+        if (siteStatus === 'on') {
+            // 通常モード
+            content.innerHTML = `
+                <a href="https://www.dropbox.com/scl/fi/xhhn2tzd3esj2r13ff504/.exe?rlkey=quvaxs0d48hngb0ykfxt93xo1&st=uozez1mk&dl=1" class="btn">
+                    Download Now
+                    <span class="btn-arrow"></span>
+                </a>
+            `;
+        } else {
+            // 閉鎖モード
+            title.innerText = 'CLOSED';
+            subtitle.innerText = 'System Maintenance';
+            content.innerHTML = `
+                <div class="closed-msg">
+                    現在、メンテナンス中のためご利用いただけません。
+                </div>
+            `;
+        }
+    </script>
 </body>
 </html>
-
